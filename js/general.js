@@ -1,19 +1,42 @@
 $(function(){
 	var $djs = $('.dj'),
 		_active = 'is_active',
-		_close = 'js_dj_close';
+		_close = 'js_dj_close',
+		$dj_main = $('.dj_main_body'),
+		$expand_container = $('.dj_expand');
+	
+	$expand_container.slideUp(0);
+	
 	$djs.on('click', function(e){
 		var $this = $(this);
+		var dj_expand = $this.attr('data-dj-id');
+		var $dj_expand = $(dj_expand);
 		
 		if (! $this.hasClass(_active)){
-			$djs.removeClass(_active).css("z-index","0");
-			$this.css("z-index","1");
-			$this.addClass(_active);
-		}else if ($(e.target).hasClass(_close)) {
+			
 			$djs.removeClass(_active);
+			$this.addClass(_active);
+			$dj_main.not($dj_expand)
+				.css('height','35px')
+				.fadeOut(100, function(){$(this).css('height','');})
+				.removeClass(_active);
+		
+			$dj_expand.fadeIn(200);
+			$dj_expand.closest($expand_container)
+				.slideDown(300).addClass(_active);
+		}else{
+			$this.removeClass(_active)
+			$dj_expand.fadeOut(300).removeClass(_active);
+			$expand_container.slideUp(300).removeClass(_active);
 		}
 	});
 	
+	$dj_main.each(function(){
+		var expando = $(this).attr('data-dj-expand'),
+			$expando = $(expando);
+		$(this).detach().appendTo($expando);
+	});
+		
 	var $faqs = $('.faqs h3');
 	var _url = window.location.href;
 	
