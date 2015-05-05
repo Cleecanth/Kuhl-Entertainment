@@ -1,0 +1,55 @@
+@mixin responsive-transforms($namespace:""){
+	
+	.#{$namespace}txt_center, 
+	%#{$namespace}txt_center {
+		text-align: center;
+	}
+
+	.#{$namespace}txt_right, 
+	%#{$namespace}txt_right {
+		text-align: right;
+	}
+
+	.#{$namespace}txt_left, 
+	%#{$namespace}txt_left {
+		text-align: left;
+	}
+}
+
+@include responsive-transforms();
+
+@if $responsive == true{
+    @each $name in $breakpoint-has-helpers {
+        @include media-query($name) {
+           @include responsive-transforms('#{$name}_');
+        }
+    }
+}
+.txt_light, %txt_light{
+	font-weight: 200;
+}
+.txt_upper, %txt_upper {
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+}
+.txt_blue, %txt_blue{
+	color: color(highlight);
+}
+.txt_rev, %txt_rev {
+	color: #fff;
+}
+.txt_merlot, %txt_secondary, %txt_merlot{
+	color: color(secondary);
+}
+.txt_electric, %txt_electric{
+	color: color(electric);
+}
+.txt_serif, %txt_serif {
+	font-family: $secondary-font-stack;
+}
+.txt_sans, %txt_sans {
+	font-family: $primary-font-stack;
+}
+.promo_wrap:hover p{
+	color: color(highlight, lightest);
+}

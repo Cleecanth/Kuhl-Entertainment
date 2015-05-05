@@ -1,0 +1,27 @@
+/*!
+Theme Name: Wedding DJs with Class
+Author: Chris Lee
+Description: A Theme For Kuhl Entertainment : Wedding DJs with Class
+Version: 1.0
+Tags: black, brown, orange, tan, white, yellow, light, one-column, two-columns, right-sidebar, flexible-width, custom-header, custom-menu, editor-style, featured-images, microformats, post-formats, rtl-language-support, sticky-post, translation-ready
+Text Domain: wedding-djs-with-class
+*/
+@charset 'UTF-8';
+
+//Base Imports
+//Functionality are defined first (these generate no CSS).
+@import 'utilities/_functions',
+		'base/_config',
+		'colors/_colors',
+		'utilities/_variables';
+
+// App style imports
+@import 'type/_fonts',
+		'utilities/_helpers',
+		'vendor/_normalize',
+		'type/_typography',
+		'layout/_import',
+		'type/_transforms',
+		'components/_import',
+		'vendor/_slick',
+		'base/_app';

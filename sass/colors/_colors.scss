@@ -1,0 +1,265 @@
+//------------------------------------
+//    $COLORS
+//------------------------------------
+//Based on: http://blog.12spokes.com/web-design-development/simple-css-color-management-with-sass/
+//Darker and lighter darkens are available by adding -dark/-darker/-light/-lighter to the end of variable names.
+
+//Non-standard colors
+$additional_colors: (
+	yellow: (
+		base: #efee90
+	)
+	,orange: (
+		base: #faae2e
+	)
+	,green: (
+		base: #b6eba4
+	)
+);
+
+
+
+//FUNCTION: combine_colors()
+// Combines two color maps (or really any double-nested map)
+
+@function combine_colors($map1, $map2){
+	@each $pal, $color in $map2{
+		$value: ($pal: $color);
+		$map1: map-merge($map1, $value);
+	}
+	@return $map1;
+}
+
+//FUNCTION: generate_color_varations()
+// Adds lighter, darker variations to color map
+// 1a. Color functions.
+// 1b. Variation names (output to map).
+// 1c. Function percentages (e.g. lighten($foo, [percentages])).
+// 2a. Determine how often to switch functions.
+// 2b. Define new map (for easier to understand return value).
+// 3a. Loop through the pallets and colors of the map input.
+// 3b. Store $color map in a list
+//     (this is required to prevent bugs on colors with names of real colors).
+// 3c. Define color function increment.
+// 4a. Loop through the variation names.
+// 4b. Get index and find the amount to use with the current color function.
+// 5a. Divide the loop increment by the number of color functions.
+// 5b. If the loop is larger than the variation frequency,
+//	   add one to the color function incriment.
+// 6a. Get the current color function and current color.
+// 6b. Add blending mode color if necessary (useful for mixing colors).
+// 7a. Call the color function, the color(s), and the amount and store that value.
+// 7b. Create the variation and color definition in map format ("name": color).
+// 7c. Merge the current base color map with the new variant map.
+// 8a. Format the previous loop results into a nested map.
+// 8b. Merge the input map with itself and the new nested map.
+// 9. Return the map with the new values.
+
+@function generate_color_variations(
+	$map: null,
+	$color-functions: (lighten, darken), 								 //[1a]
+	$variation-names: (light, lighter, lightest, dark, darker, darkest), //[1b]
+	$increments: (10%, 20%, 30%, 10%, 20%, 40%), 				    	 //[1c]
+	$blending-color: null
+){
+	@if $map == null {
+		@debug "Must enter a map to generate color variations";
+	}@else{
+	$variation-frequency:
+		length($variation-names) / length($color-functions); //[2a]
+	$new-map: $map !global;							 	     //[2b]
+
+		@each $pal, $color in $map{ 				//[3a]
+			$values-list: $color !global;			//[3b]
+			$color_fn-i: 1;							//[3c]
+
+			@each $variant in $variation-names {        //[4a]
+				$i: index($variation-names, $variant);	//[4b]
+				$amount: nth($increments, $i);			//[4b]
+
+				$color_fn_place: $i/$variation-frequency;	//[5a]
+				@if $color_fn_place > $color_fn-i{ 			//[5b]
+					$color_fn-i: $color_fn-i + 1;			//[5b]
+				}
+
+				$curr_fn: nth($color-functions, $color_fn-i); 		//[6a]
+				$curr_color: map-get($color, base);					//[6b]
+				@if $blending-color != null{ 						//[6c]
+					$curr_color: append($curr_color, $blending-color);
+				}
+
+				$new-color: call($curr_fn, $curr_color, $amount) !global; 	//[7a]
+				$value: ($variant: $new-color); 							//[7b]
+
+				$values-list: map-merge($value, $values-list) !global;		//[7c]
+			}
+
+			// This is required because sass maps are formatted
+			// with double parenthesis as they get more nested.
+			// (first-level: ( (second-level: value) ) )
+			$inner-map: ($pal:($values-list));				  		//[8a]
+			$new-map: combine_colors($new-map, $inner-map) !global; //[8b]
+
+		}
+		@return $new-map; 								//[9]
+	}
+}
+
+//Create new variations for the non-default colors we defined.
+$additional_colors: generate_color_variations($additional_colors) !global;
+
+// Replaces all the code from line 197-286
+$colors: generate_color_variations($colors) !global;
+
+//Adding the additional colors to the colors map.
+$colors: combine_colors($colors, $additional_colors) !global;
+
+$color_white: #fff;
+$color_black: #000;
+
+//%color_white, .color_white { color: white; }
+//%color_txt, %color_text, .color_txt { color: color(text); }
+//%color_alert, %color_select, .color_alert, .color_select { color: color(select); }
+//%color_link, .color_link { color: color(link); }
+//%color_highlight, .color_highlight { color: color(highlight); }
+//%color_label, .color_label { color: color(label); }
+//%color_soft, .color_soft { color:color(soft_action); }
+//%color_current {color: currentColor; }
+
+//Background colors.
+
+%highlight, %bg, .highlight{
+//	&_yellow{
+//		background-color: color(yellow, light) !important;
+//	}
+//	&_red{
+//		background-color: color(alert, lightest) !important;
+//	}
+//	&_blue{
+//		background-color: color(highlight) !important;
+//	}
+//	&_gray{
+//		background-color: color(form) !important;
+//	}
+//	&_green{
+//		background-color: color(green, light) !important;
+//	}
+//	&_orange{
+//		background-color: color(orange, lightest) !important;
+//	}
+}
+//For extensions only
+%highlight, %bg{
+//	&_white{
+//		background-color: $color_white;
+//	}
+//	&_link{
+//		background-color: color(link);
+//	}
+//	&_highlight{
+//		background-color: color(highlight);
+//	}
+//	&_soft, &_soft_action{
+//		background-color: color(soft_action);
+//	}
+//	&_subtle, &_bg{
+//		background-color: color(subtle);
+//	}
+//	&_select{
+//		background-color: color(select);
+//	}
+	&_transparent{
+		background-color: transparent;
+	}
+}
+
+// $primary_color: colors(primary) !default;        		//UW Blue (dark blue)
+// $primary_color_alt: colors(primary_alt) !default;    	//UW Steel Blue
+// $brand_color: colors(primary) !default;
+// $accent_color: colors(accent) !default;        			//UW Red (maroonish-red)
+// $accent_color_alt: colors(accent_alt) !default;    		//UW Fire Red (orangey-red)
+// $action_color: colors(action) !default;         	//Green / Earth
+// $function_color: colors(function) !default;       		//UW Tan
+// $alert_color: colors(alert) !default;         	 		//Red
+// $gray_color: colors(gray) !default;         	 		//gray
+// $border_color: #8a9095 !default;         				//gray
+// $link_color: colors(link) !default;
+// $txt_color: colors(text) !default;
+// $label_color: colors(label) !default;
+// $soft_action_color: colors(soft_action) !default;
+// $form_color: colors(form) !default;
+// $subtle_color: colors(subtle) !default;
+// $select_color: colors(select) !default;
+// $highlight_color: colors(highlight) !default;
+//
+// $primary_color_dark: darken($primary_color, 10%)                  !default;    //Darker UW Blue (dark blue)
+// $primary_color_alt_dark: darken($primary_color_alt, 10%)          !default;    //Darker UW Steel Blue
+// $accent_color_dark: darken($accent_color, 10%)                    !default;    //Darker UW Red (maroonish-red)
+// $accent_color_alt_dark: darken($accent_color_alt, 10%)            !default;    //Darker UW Fire Red (orangey-red)
+// $action_color_dark: darken($action_color, 10%)                    !default;    //Darker Green / Earth
+// $function_color_dark: darken($function_color, 10%)                !default;    //Darker UW Tan
+// $alert_color_dark: darken($alert_color, 10%)                      !default;    //Darker Red
+// $gray_color_dark: darken($gray_color, 10%)                        !default;    //Darker gray
+// $border_color_dark: darken($border_color, 10%)                    !default;    //Blueish-Gray
+// $link_color_dark: darken($link_color, 10%)                        !default;
+// $txt_color_dark: darken($txt_color, 10%)                        	!default;
+// $label_color_dark: darken($label_color, 10%)                        		!default;
+// $soft_action_color_dark: darken($soft_action_color, 10%)            !default;
+// $form_color_dark: darken($form_color, 10%)                        	!default;
+// $subtle_color_dark: darken($subtle_color, 10%)                      !default;
+// $select_color_dark: darken($select_color, 10%)                      !default;
+// $highlight_color_dark: darken($highlight_color, 10%)                !default;
+//
+// $primary_color_darker: darken($primary_color, 20%)              !default;    //Deep UW Blue (dark blue)
+// $primary_color_alt_darker: darken($primary_color_alt, 20%)      !default;    //Deep UW Steel Blue
+// $accent_color_darker: darken($accent_color, 20%)                !default;    //Deep UW Red (maroonish-red)
+// $accent_color_alt_darker: darken($accent_color_alt, 20%)        !default;    //Deep UW Fire Red (orangey-red)
+// $action_color_darker: darken($action_color, 20%)                !default;    //Deep Green / Earth
+// $function_color_darker: darken($function_color, 20%)            !default;    //Deep UW Tan
+// $alert_color_darker: darken($alert_color, 20%)                  !default;    //Deep Red
+// $gray_color_darker: darken($gray_color, 20%)                    !default;    //Deep gray
+// $border_color_darker: darken($border_color, 20%)                !default;    //
+// $link_color_darker: darken($link_color, 20%)                    !default;
+// $txt_color_darker: darken($txt_color, 20%)                        	!default;
+// $label_color_darker: darken($label_color, 20%)                        		!default;
+// $soft_action_color_darker: darken($soft_action_color, 20%)            !default;
+// $form_color_darker: darken($form_color, 20%)                        	!default;
+// $subtle_color_darker: darken($subtle_color, 20%)                      !default;
+// $select_color_darker: darken($select_color, 20%)                      !default;
+// $highlight_color_darker: darken($highlight_color, 20%)                !default;
+//
+// $primary_color_light: lighten($primary_color, 10%)               !default;    //Ligher UW Blue
+// $primary_color_alt_light: lighten($primary_color_alt, 10%)       !default;    //Ligher UW Steel Blue
+// $accent_color_light: lighten($accent_color, 10%)                 !default;    //Ligher UW Red (maroonish-red)
+// $accent_color_alt_light: lighten($accent_color_alt, 10%)         !default;    //Ligher UW Fire Red (orangey-red)
+// $action_color_light: lighten($action_color, 10%)                 !default;    //Ligher Green / Earth
+// $function_color_light: lighten($function_color, 10%)             !default;    //Ligher UW Tan
+// $alert_color_light: lighten($alert_color, 10%)                   !default;    //Ligher Red
+// $gray_color_light: lighten($gray_color, 10%)                     !default;    //Ligher gray
+// $border_color_light: lighten($border_color, 10%)                 !default;    //Lighter gray
+// $link_color_light: lighten($link_color, 10%)                     !default;
+// $txt_color_light: lighten($txt_color, 10%)                        	!default;
+// $label_color_light: lighten($label_color, 10%)                        		!default;
+// $soft_action_color_light: lighten($soft_action_color, 10%)            !default;
+// $form_color_light: lighten($form_color, 10%)                        	!default;
+// $subtle_color_light: lighten($subtle_color, 10%)                      !default;
+// $select_color_light: lighten($select_color, 10%)                      !default;
+// $highlight_color_light: lighten($highlight_color, 10%)                !default;
+//
+// $primary_color_lighter: lighten($primary_color, 20%)               !default;    //Ligher UW Blue
+// $primary_color_alt_lighter: lighten($primary_color_alt, 20%)       !default;    //Ligher UW Steel Blue
+// $accent_color_lighter: lighten($accent_color, 20%)                 !default;    //Ligher UW Red (maroonish-red)
+// $accent_color_alt_lighter: lighten($accent_color_alt, 20%)         !default;    //Ligher UW Fire Red (orangey-red)
+// $action_color_lighter: lighten($action_color, 20%)                 !default;    //Ligher Green / Earth
+// $function_color_lighter: lighten($function_color, 20%)             !default;    //Ligher UW Tan
+// $alert_color_lighter: lighten($alert_color, 20%)                   !default;    //Ligher Red
+// $gray_color_lighter: lighten($gray_color, 20%)                     !default;     //Ligher gray
+// $border_color_lighter: lighten($border_color, 20%)                 !default;    //Lighter gray
+// $link_color_lighter: lighten($link_color, 20%)                     !default;
+// $txt_color_lighter: lighten($txt_color, 20%)                        	!default;
+// $label_color_lighter: lighten($label_color, 20%)                        		!default;
+// $soft_action_color_lighter: lighten($soft_action_color, 20%)            !default;
+// $form_color_lighter: lighten($form_color, 20%)                        	!default;
+// $subtle_color_lighter: lighten($subtle_color, 20%)                      !default;
+// $select_color_lighter: lighten($select_color, 20%)                      !default;
+// $highlight_color_lighter: lighten($highlight_color, 20%)                !default;

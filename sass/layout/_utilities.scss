@@ -1,0 +1,48 @@
+.i_bl, %inline_block{
+	display: inline-block;
+}
+.bl, %block {
+	display: block;
+}
+.bg_striped, %bg_striped {
+	background-image: url(img/bg_stripes.jpg);
+}
+.bg_onyx {
+	background-color: color(text);
+}
+.bg_light{
+	background-color: color(bg); 
+}
+.bg_highlight {
+	background-color: color(highlight);
+}
+.txt_blue_dark {
+	color: color(highlight, darkest);
+}
+.bdr_b:after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 6px;
+	bottom: 0;
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-color: color(electric);
+}
+.bdr_t:before {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 6px;
+	bottom: 0;
+	border-bottom-width: 2px solid color(electric);
+}
+.promo {
+	@include rems(max-height, 95px);
+}
+.promo_wrap {
+	@include rems(height, 95px);
+	@include mq(smalls) {
+		@include type-space(padding-top, .5);
+	}
+}
