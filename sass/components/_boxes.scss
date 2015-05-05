@@ -235,7 +235,7 @@
 .dj_additional {
 	border-top: 1px dotted color(secondary);
 	border-left: 0;
-	@include type-space-sc(padding, 1, .5);
+	@include type-space-sc(padding, 2, .5, 2);
 	padding-right: 0;
 	display: block;
 	width: auto;

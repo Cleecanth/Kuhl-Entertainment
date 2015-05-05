@@ -1,6 +1,5 @@
-
-.sass-cache/*
-
-*.scssc
+*sass-cache*
 
 *.scssc
+
+sass/.sass-cache/967c409534e378adc30fcd4dd1a3a11f12ebc48b/_boxes.scssc
