@@ -38,6 +38,11 @@
 .txt_rev, %txt_rev {
 	color: #fff;
 }
+
+.txt_small {
+	@include type-font-size(ceil(modular-scale(-1)), true);
+}
+
 .txt_merlot, %txt_secondary, %txt_merlot{
 	color: color(secondary);
 }

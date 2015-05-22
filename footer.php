@@ -11,11 +11,11 @@
 	</div><!-- #content -->
 
 	<footer id="colophon" class="footer" role="contentinfo">
-		<div class="wrap pad_n_t">
+		<div class="wrap pad_t_n">
 			<div class="row txt_rev row_narrow">
 				<div class="column side_content txt_center">
-					<a class="smalls_pad_h_2 smalls_space_b_2 i_bl whole" href="/" title="Home" style="max-width: 350px; width: 100%;">
-						<img class="pad_h" src="<?php echo get_template_directory_uri()?>/img/logo_with_promise.png" alt="Kuhl Entertainment, Wedding DJs With Class">
+					<a class="smalls_pad_l_2 smalls_pad_r_2 smalls_space_b_2 i_bl whole" href="/" title="Home" style="max-width: 350px; width: 100%;">
+						<img class="pad_l pad_r" src="<?php echo get_template_directory_uri()?>/img/logo_with_promise.png" alt="Kuhl Entertainment, Wedding DJs With Class">
 					</a>
 				</div>
 				<div class="column main_content">

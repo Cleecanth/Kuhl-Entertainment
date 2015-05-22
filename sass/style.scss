@@ -11,6 +11,7 @@ Text Domain: wedding-djs-with-class
 //Base Imports
 //Functionality are defined first (these generate no CSS).
 @import 'utilities/_functions',
+		'layout/_spacing',
 		'base/_config',
 		'colors/_colors',
 		'utilities/_variables';

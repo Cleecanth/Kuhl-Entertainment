@@ -248,7 +248,7 @@ ul, ol, dd, menu {
 
 li > ul,
 li > ol {
-    @extend %space_n_v;
+    @extend %space_v_n;
 }
 
 

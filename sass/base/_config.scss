@@ -4,6 +4,7 @@ $base-font-size:             16px;
 $base-line-height:           24px;
 $auto-scale-type:           false;
 $scale-ratio:               1.214;
+$rem-px-fallback:			true;
 
 $primary-font-stack:      	'montserrat', verdana, helvetica, arial, sans-serif;
 $secondary-font-stack:     	'aleo', verdana, helvetica, arial, sans-serif;
@@ -81,6 +82,15 @@ $breakpoint_has_widths: ('smalls', 'small', 'smallish', 'bigs', 'lap', 'desk', '
 $breakpoint_has_push:   ('smalls', 'small', 'smallish', 'bigs', 'lap', 'desk', 'wide');
 $breakpoint_has_pull:   ('smalls', 'small', 'smallish', 'bigs', 'lap', 'desk', 'wide');
 
+//Spacing classes config
+$spacing-classes: (
+	directions: ('','t','l','b','r'),
+	amounts: (0, 1, .5, -1, 2),
+	names: ('n','', 'half', 'neg', '2'),
+	prefixes: ('space', 'pad')
+);
+
+$breakpoint-has-spacing-classes: 			('smalls', 'bigs', 'desk');
 
 //Colors - based on:
 //http://blog.12spokes.com/web-design-development/simple-css-color-management-with-sass/
@@ -112,6 +122,9 @@ $colors: (
 	),
 	bg: (
 		'base': #faf9fb
+	),
+	shag: (
+		'base' : #758989
 	)
 );
 

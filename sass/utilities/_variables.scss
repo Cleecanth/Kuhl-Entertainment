@@ -223,6 +223,16 @@ $breakpoints: (
     'desk' '(min-width: 1024px)'
 )!default;
 
+$all-breakpoints: ();
+
+//Grab all breakpoint names
+@each $breakpoint in $breakpoints {
+	$temp-bp: nth($breakpoint, 1);
+
+	@if $temp-bp != ' '{
+		$all-breakpoints: append($all-breakpoints, $temp-bp, comma);
+	}
+}
 
 
 // Define which namespaced breakpoints you would like to generate for each of

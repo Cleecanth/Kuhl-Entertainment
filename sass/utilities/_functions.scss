@@ -285,34 +285,34 @@ $golden_ratio:  golden();
 // Taken from:
 // https://gist.github.com/jgv/745754
 @mixin opacity($trans) {
-  filter: alpha(opactiy=($trans * 100));
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$trans * 100})";
+//  filter: alpha(opactiy=($trans * 100));
+//  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$trans * 100})";
   -moz-opacity: $trans;
   -khtml-opacity: $trans;
   opacity: $trans;
 }
 
-// REM generator
-// Used to create a property with a rem value and PX fallback
-@mixin rems($properties, $size){
-	@if (unitless($size) == true){
-		$size: $size * 1px;
-	}
-    @each $property in $properties{
-		#{$property}: $size;
-		#{$property}: ($size / $base-font-size) * 1rem;
-	}
-}
-
 //Stripped REM generator
 //Useful if you just need the rem value
 @function rems($size, $base-font:$base-font-size){
-	@if (unitless($size) == true){
-		$size: $size * 1px;
-	}
-	@return ($size / $base-font) * 1rem;
+	@return px-to-rems($size, $base-font);
 }
 
+@function px-to-rems($size, $base-font:$base-font-size) {
+	
+	@if unitless($size){
+		$size: $size * 1px;
+	}
+
+	$size: ($size / $base-font) * 1rem;
+
+	@if $size == 0rem {
+		$size: 0;
+	}
+
+	@return $size;
+
+}
 
 //String Helpers.
 // Taken from: https://github.com/devatrox/Sunglass
@@ -320,14 +320,14 @@ $golden_ratio:  golden();
 //String-contains
 @function str-contains($string, $substr, $pos: 0) {
 
-  $string: str-slice($string, $pos);
+	$string: str-slice($string, $pos);
 
-  @if str-index($string, $substr) != 0 {
-    @return true;
-  }
-  @else {
-    @return false;
-  }
+	@if str-index($string, $substr) != null {
+		@return true;
+	}
+	@else {
+		@return false;
+	}
 }
 
 //String Joining
@@ -345,6 +345,144 @@ $golden_ratio:  golden();
   @return $string;
 }
 
+// List contains check
+// Outputs true/false
+@function list-contains($list, $var) {
+	@return index($list, $item) != null;
+}
+
+//Reverse a List
+@function list-reverse($list, $recursive: false) {
+   $result: ();
+
+   @for $i from length($list)*-1 through -1 {
+      @if type-of(nth($list, abs($i))) == list and $recursive {
+        $result: append($result, reverse(nth($list, abs($i)), $recursive));
+      }
+
+      @else {
+        $result: append($result, nth($list, abs($i)));
+      }
+   }
+
+   @return $result;
+}
+
+//Map Helpers
+//-----------------------------------
+//Taken from: http://www.sitepoint.com/extra-map-functions-sass/
+
+//Deep Set
+//Update a deeply nested map key.
+@function map-deep-set($map, $keys... /*, $value */) {
+	$map-list: ($map,);
+	$result: null;
+
+	@if length($keys) == 2 {
+		@return map-merge($map, (nth($keys, 1): nth($keys, -1)));
+	}
+
+	@for $i from 1 through length($keys) - 2 {
+		$map-list: append($map-list, map-get(nth($map-list, -1), nth($keys, $i)));
+	}
+
+	@for $i from length($map-list) through 1 {
+		$result: map-merge(nth($map-list, $i), (nth($keys, $i): if($i == length($map-list), nth($keys, -1), $result)));
+	}
+
+	@return $result;
+}
+
+//Map depth finder
+// Returns a map's depth. Useful for debugging maps.
+@function map-depth($map) {
+	$level: 1;
+
+	@each $key, $value in $map {
+		@if type-of($value) == "map" {
+			$level: max(map-depth($value) + 1, $level);
+		}
+	}
+
+	@return $level;
+}
+
+//Check multiple map keys
+@function map-has-keys($map, $keys...) {
+	@each $key in $keys {
+		@if not map-has-key($map, $key) {
+			@return false;
+		}
+	}
+
+	@return true;
+}
+
+@function map-contains-keys($map, $keys...){
+	@return map-has-keys($map, $keys);
+}
+
+//Check for deep map keys
+@function map-has-nested-keys($map, $keys...) {
+	@each $key in $keys {
+		@if not map-has-key($map, $key) {
+			@return false;
+		}
+
+		$map: map-get($map, $key);
+	}
+
+	@return true;
+}
+@function map-contains-nested-keys($map, $keys...) {
+	@return map-has-nested-keys($map, $keys);
+}
+
+//Get map value at nested or 'deep' key, per $keys list
+@function map-get-nested($map, $keys...) {
+	@each $key in $keys {
+		@if type-of($map) != 'map' {
+			@return $map;
+		}
+		$map: map-get($map, $key);
+	}
+	@return $map;
+}
+
+//Map Extend
+// Similar to jQuery's extend function but for sass maps
+// Takes two maps and merges their differences
+@function map-extend($map, $maps... /*, $deep */) {
+	$last: nth($maps, -1);
+	$deep: $last == true;
+	$max: if($deep, length($maps) - 1, length($maps));
+
+	// Loop through all maps in $maps...
+	@for $i from 1 through $max {
+		// Store current map
+		$current: nth($maps, $i);
+
+		// If not in deep mode, simply merge current map with map
+		@if not $deep {
+			$map: map-merge($map, $current);
+		} @else {
+			// If in deep mode, loop through all tuples in current map
+			@each $key, $value in $current {
+
+				// If value is a nested map and same key from map is a nested map as well
+				@if type-of($value) == "map" and type-of(map-get($map, $key)) == "map" {
+					// Recursive extend
+					$value: map-extend(map-get($map, $key), $value, true);
+				}
+
+				// Merge current tuple with map
+				$map: map-merge($map, ($key: $value));
+			}
+		}
+	}
+
+	@return $map;
+}
 
 //------------------------------------
 //    $TYPOGRAPHY
@@ -453,14 +591,146 @@ $golden_ratio:  golden();
  //     @include type-space(padding-left, 1);
  // }
 
-@mixin type-space($property, $multiplier: 2) {
-    #{$property}: $multiplier * $type-magic-number;
-    #{$property}: $multiplier * $type-magic-ratio * 1rem;
+@mixin rems($property, $sizes, $important:false, $base-font: $base-font-size) {
+	$important_val: '';
+	$rem_sizes: null;
+	$px_sizes: null;
+
+	@if $important{
+		$important_val: ' !important';
+	}
+
+	@each $size in $sizes {
+		@if $size == ''{
+			$size: null;
+			$px_sizes: join($px_sizes, $size, space);
+		}@else {
+			@if $size == 0px{
+				$size: 0;
+			}
+
+			$px_sizes: join($px_sizes, $size, space);
+			$size: px-to-rems($size, $base-font);
+		}
+		$rem_sizes: join($rem_sizes, $size, space);
+	};
+
+	@if $rem-px-fallback {
+		#{$property}: #{$px_sizes}#{$important_val};
+	}
+	#{$property}: #{$rem_sizes}#{$important_val};
+
 }
 
-@mixin type_space_important($property, $multiplier: 2) {
-	#{$property}: $multiplier * $type_magic_number !important;
-	#{$property}: $multiplier * $type_magic_ratio * 1rem !important;
+//ALIAS: same as above
+@mixin rems-to-px($property, $sizes, $important:false, $base-font: $base-font-size){
+	@include rems($property, $sizes, $important, $base-font);
+}
+
+// Quickly generate a font-size in rems, with a pixel fallback, based on the
+// value we pass into the mixin, e.g.:
+// h1 {
+//     @include type-font-size(24px);
+// }
+// 1. Set the base element’s `font-size` to the value of your choosing. Set in
+//    rems, assuming a browser default of 16px.
+// 2. Work out the unitless `line-height` for your project based around your
+//    desired `line-height` (defined previously in pixels), and your project’s
+//    base font size.
+
+@mixin type-font-size(
+		$font-size,
+		$line-height: true,
+		$selector: '',
+		$font-base: $base-font-size
+	) {
+
+	//Create REM-based font-size
+	@include rems(font-size, $font-size);
+
+	@if $line-height == true {
+
+		$line-height: baseline-calc($font-size, $font-base);
+		line-height: $line-height;
+
+		//Index line-height to type map.
+		@if map_has_key($type, $selector){
+			$type: define-type($selector, line-height, $line-height) !global;
+		}
+   }
+   //Index values to type map.
+   @if map_has_key($type, $selector){
+	   $type: define-type($selector, px, $font-size) !global;
+	   $type: define-type($selector, rem, rems($font-size)) !global;
+   }
+}
+//AlIAS
+@mixin font-size(
+	$font-size,
+	$line-height: true,
+	$selector: '',
+	$font-base: $base-font-size
+){
+	@include type-font-size($font-size, $line-height, $selector, $font-base);
+}
+
+ // Space elements by an amount based on line-height/gutter. Pass in the property
+ // to be indented as a paramater and the number of lines to use as an optional paramater, e.g.:
+ // pre {
+ //     @include type-space(padding-left, 1);
+ // }
+ // Accepts multiple properties as a nested list.
+
+@mixin type-space($properties, $multipliers.../*$important*/) {
+
+	$important: false;
+	$multiplier: nth($multipliers, 1);
+	$m-length: length($multipliers);
+
+	//Check if multiple arguments have been passed
+	@if $m-length > 1 {
+		//If so, see if the last argument is $important
+		$important_check: nth($multipliers, -1);
+
+		//If last value is $important, then set the $multiplier and $important accordingly
+		@if type-of($important_check) == bool {
+			$important: $important_check;
+			$multiplier: nth($multipliers, 1);
+			$m-length: 1;
+		}
+	}
+
+	//If multiplier is only 1 value, then do expected stuff
+	@if $m-length <= 1 {
+
+		@each $property in $properties {
+
+			$value: $multiplier * $type-magic-number;
+
+			//if the value is for right or left spacing, use the gutter width for spacing.
+			@if str-contains($property, 'right') or str-contains($property, 'left'){
+				$value: $multiplier * $gutter;
+			}
+
+			@include rems($property, $value, $important);
+
+		}
+	//if many multipliers are passed in, then we know type-space-sc should be used
+	}@else {
+
+		$top: nth($multipliers, 1);
+		$right: nth($multipliers, 2);
+		$bottom: $top;
+		$left: $right;
+
+		@if $m-length > 2 {
+			$bottom: nth($multipliers, 3);
+			@if $m-length > 3 {
+				$left: nth($multipliers, 4);
+			}
+		}
+		@include type-space-sc($properties, $top, $right, $bottom, $left );
+	}
 }
 
 // Same as above, but for shortcut properties.
@@ -468,22 +738,44 @@ $golden_ratio:  golden();
 // pre {
 //    @include type-space(padding, 1, 2, 1, 0);
 // }
-@mixin type-space-sc($property, $top: 0, $right: 0, $bottom: false, $left: false){
-    @if $bottom == false{
-        $bottom: $top;
-    }
-    @if $left == false{
-        $left: $right;
-    }
-    // If top and bottom are equal, only generate first and second properties
-    // This cuts down on file size a little bit.
-    @if $right == $left and $top == $bottom{
-        #{$property}: ($top * $type-magic-number) ($right * $type-magic-number);
-        #{$property}: ($top * $type-magic-ratio) * 1rem ($right * $type-magic-ratio) * 1rem;
-    }@else{
-        #{$property}: ($top * $type-magic-number) ($right * $type-magic-number) ($bottom * $type-magic-number) ($left * $type-magic-number);
-        #{$property}: ($top * $type-magic-ratio) * 1rem ($right * $type-magic-ratio) * 1rem ($bottom * $type-magic-ratio) * 1rem ($left * $type-magic-ratio) * 1rem;
-    }
+@mixin type-space-sc($property, $top: 0, $right: 0, $bottom: $top, $left: $right) {
+
+	//if top is given a list, then pass those values to the correct variables
+	@if length($top) > 1 {
+		$bottom: nth($top, 1);
+		$right: nth($top, 2);
+		$left: nth($top, 2);
+
+		@if length($top) > 2 {
+			$bottom: nth($top, 3);
+
+			@if length($top) > 3 {
+				$left: nth($top, 4);
+			}
+		}
+		$top: nth($top, 1);
+	}
+
+	//Calculate values
+	//Right and left get
+	$top_val: $top * $base-line-height;
+	$bottom_val: $bottom * $base-line-height;
+	$right_val: $right * $gutter;
+	$left_val: $left * $gutter;
+
+	// Generating only the necessary properties, and leave the rest blank.
+	// e.g. margin: 1px 3px; or margin: 2px 3px 1px;
+	@if $right == $left or $left == null {
+		$left_val: unquote('');
+
+		@if $top == $bottom or $bottom == null {
+			$bottom_val: unquote('');
+		};
+	};
+
+	//Output px and rem values.
+	@include rems($property, $top_val $right_val $bottom_val $left_val)
+
 }
 
 //Same as above, but in function form

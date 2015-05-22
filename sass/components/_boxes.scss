@@ -8,7 +8,7 @@
     }
 }
 .box_open{
-	@extend %pad_n_h;
+	@extend %pad_h_n;
 	border-width: 1px;
 	border-style: solid;
     border-top-color: color(function);

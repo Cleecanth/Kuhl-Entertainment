@@ -14,6 +14,7 @@
 <meta name="google-site-verification" content="nBxmtpbU3BOWre56_oGZp6tiuGHOJ7985ZEZYpqdcfo" />
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
+<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); echo '?' . filemtime( get_stylesheet_directory() . '/style.css'); ?>" type="text/css" media="screen" />
 
 <?php wp_head(); ?>
 <script>
@@ -29,19 +30,19 @@
 </head>
 <?php
 
-$menu_left = array(
+$menu_primary = array(
 	'theme_location'  => 'primary',
 	'menu'            => false,
-	'menu_class' 	  => 'list_naked list_nav list_inline txt_center pad_r_half',
+	'menu_class' 	  => 'nav_primary_list list_naked list_nav list_inline',
 	'container'       => false,
 	'echo'            => true,
 	'items_wrap'      => '<ul class="%2$s">%3$s</ul>',
 	'depth'           => 0,
 );
-$menu_right = array(
+$menu_top = array(
 	'theme_location'  => 'secondary',
 	'menu'            => false,
-	'menu_class' 	  => 'list_naked list_nav list_inline txt_center pad_l_half',
+	'menu_class' 	  => 'nav_secondary_list list_naked list_nav list_inline txt_right',
 	'container'       => false,
 	'echo'            => true,
 	'items_wrap'      => '<ul class="%2$s">%3$s</ul>',
@@ -55,10 +56,7 @@ $menu_right = array(
 	<header id="masthead" class="site_header" role="banner">
 		<div class="wrap pad_n_t">
 			<div class="row row_full main_navigation">
-				<div class="column third txt_center">
-					<?php wp_nav_menu( $menu_left ); ?>
-				</div>
-				<div class="column third txt_center space_neg_b_2 small_pad_n_t smalls_pad_t_half">
+				<div class="column logo_column txt_center smalls_pad_t_half">
 					<h1 class="site-title i_bl bigs_pad_t_half">
 						<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
 							<img class="logo" src="<?php echo get_template_directory_uri()?>/img/logo_large.png">
@@ -66,10 +64,23 @@ $menu_right = array(
 						</a>
 					</h1>
 				</div>
+				<div class="column nav_column">
+					<button class="nav_toggle button"><span class="visually_hidden">Menu</span></button>
+					<div id="js-nav" class="row_full row nav_container">
+						<div class="nav nav_column nav_secondary">
+							<?php wp_nav_menu( $menu_top ); ?>
+						</div>
+						<div class="nav nav_column nav_primary">
+							<?php wp_nav_menu( $menu_primary ); ?>
+						</div>
+					</div>
+				</div>
+<!--
 				<div class="column third txt_center">
 					<?php wp_nav_menu( $menu_right ); ?>
 				</div>
-	<!--			<h2 class="site-description"><?php bloginfo( 'description' ); ?></h2>-->
+-->
+				<h2 class="visually_hidden site-description"><?php bloginfo( 'description' ); ?></h2>
 			</div><!-- .site-branding -->
 		</div>
 		<!--<nav id="site-navigation" class="main-navigation" role="navigation">

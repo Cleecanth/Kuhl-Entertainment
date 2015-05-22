@@ -104,3 +104,50 @@ body{
 	border-top: 2px solid color(electric);
 	box-shadow: 0 -4px 0 color(text);
 }
+
+//----Spacing Override classes---//
+// Outputs spacing utility classes.
+
+@if $breakpoint-has-spacing-classes != false {
+	//Assume important and non-silent
+	$spacing-config: ( important: true, silent: false );
+	$spacing-config: map-extend($spacing-classes, $spacing-config, true);
+
+	@include spacing-utilities-init(
+        $breakpoints: $breakpoint-has-spacing-classes, $config: $spacing-config
+    );
+}
+
+.space_n_t, 
+.space_n_v {
+	@extend .space_t_n;
+}
+.space_n_r, 
+.space_n_h {
+	@extend .space_r_n;
+}
+.space_n_b, 
+.space_n_v {
+	@extend .space_b_n;
+}
+.space_n_l, 
+.space_n_h {
+	@extend .space_l_n;
+}
+
+.pad_n_t, 
+.pad_n_v {
+	@extend .pad_t_n;
+}
+.pad_n_r, 
+.pad_n_h {
+	@extend .pad_r_n;
+}
+.pad_n_b, 
+.pad_n_v {
+	@extend .pad_b_n;
+}
+.pad_n_l, 
+.pad_n_h {
+	@extend .pad_l_n;
+}

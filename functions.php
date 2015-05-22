@@ -97,17 +97,25 @@ function wedding_djs_with_class_widgets_init() {
 }
 add_action( 'widgets_init', 'wedding_djs_with_class_widgets_init' );
 
+//Remove wordpress generated header meta tags
+function wp_remove_version() {return '';}
+
+remove_action( 'wp_head', 'wp_generator', 99 ); // WP version
+add_filter('the_generator', 'wp_remove_version', 99); // Also remove from RSS
+	
 /**
  * Enqueue scripts and styles.
  */
 if (!is_admin()) add_action("wp_enqueue_scripts", "my_jquery_enqueue", 11);
+
+//Make sure we use one version of jQuery
 function my_jquery_enqueue() {
    wp_deregister_script('jquery');
    wp_register_script('jquery', "http" . ($_SERVER['SERVER_PORT'] == 443 ? "s" : "") . "://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js", false, null);
    wp_enqueue_script('jquery');
 }
+
 function wedding_djs_with_class_scripts() {
-	wp_enqueue_style( 'wedding-djs-with-class-style', get_stylesheet_uri() );
 
 	wp_enqueue_script( 'wedding-djs-with-class-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true );
 
@@ -119,6 +127,14 @@ function wedding_djs_with_class_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'wedding_djs_with_class_scripts' );
+
+// add ie conditional html5 shim to header
+function add_ie_html5_shim () {
+    echo '<!--[if lt IE 9]>';
+    echo '<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>';
+    echo '<![endif]-->';
+}
+add_action('wp_head', 'add_ie_html5_shim');
 
 /**
  * Implement the Custom Header feature.

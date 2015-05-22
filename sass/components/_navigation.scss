@@ -23,31 +23,55 @@
 	top: -5px;
 }
 
+.nav_column {
+	@extend %three_fifths;
+	@extend %smallish_seven_tenths;
+	@extend %bigs_two_thirds;
+}
+
+.logo_column {
+	@extend %two_fifths;
+	@extend %smallish_three_tenths;
+	@extend %bigs_one_third;
+}
+
 .main_navigation {
 	@extend %one_whole;
-	display: table;
+	position: relative;
 	
-	.column {
-		display: table-cell;
-		vertical-align: middle;
+	& > .column {
+		vertical-align: top;
 	}
+	
+	
+	.list_nav {
+		display: table-row;
+	}
+	
 	li {
 		max-width: 45%;
 		min-width: 99px;
+		text-align: center;
 		padding-left: 0;
 		padding-right: 0;
+		display: table-cell;
+	}
+	
+	.nav_primary a {
+		color: color(electric);
+	}
+	.nav_secondary a {
+		color: color(shag)
 	}
 	
 	li a {
-		color: color(electric);
-		@include rems(font-size, modular-scale(1));
-		@extend %txt_upper;
+		
 		white-space: nowrap;
 		padding-right: 10%;
 		padding-left: 10%;
 		
 		&:hover {
-			color: color(electric, lighter);
+			color: color(highlight, lighter);
 		}
 	}
 	.current_page_item a{
@@ -55,7 +79,77 @@
 		cursor: default;
 	}
 	
+	.nav {
+		position: absolute;
+		right: 0;
+	}
+	
+	.nav_primary {
+		bottom: 0;
+		@include type-space(padding-bottom, 1);
+	}
+	
+	.nav_secondary {
+		top: 0;
+		right: 0;
+		
+		@include mq((bigs, smallish)){
+			border-bottom: 1px dotted rgba(white, .3);
+		}
+	}
+	
+	.nav_primary_list {
+		@include rems(font-size, modular-scale(1));
+		@extend %txt_upper;
+		@include type-space(margin-left, .5);
+		@include type-space(padding-bottom, 1);
+	}
+
+	.nav_secondary_list {
+		@extend %txt_upper;
+		@include type-space(padding-left, .5);
+		float: right;
+		
+	}
+	
 }
+
+.nav_container {
+	display: none;
+	
+	@include mq((bigs, smallish)){
+		display: inline-block !important;
+	}
+}
+
+.nav_toggle {
+	display: block;
+	margin: 3rem auto;
+	position: relative;
+	width: 3em;
+	height: 3em;
+	padding: 1.5em;
+	
+	@include mq((bigs, smallish)) {
+		display: none !important;
+	}
+}
+.nav_toggle:before {
+	content: "";
+	position: absolute;
+	left: .25em;
+	top: .4em;
+	width: 1em;
+	height: 0.15em;
+	background: currentColor;
+	box-shadow: 0 0.25em 0 0 currentcolor, 0 0.5em 0 0 currentcolor;
+	font-size: 2em;
+}
+.nav_toggle:focus {
+	outline: none;
+}
+
+
 //.main-navigation {
 //	clear: both;
 //	display: block;
