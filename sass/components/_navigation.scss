@@ -6,6 +6,11 @@
 	@include mq(bigs){
 		@include type-space(margin-bottom, -2.5);
 	}
+	@include mq(small) {
+		width: 150px;
+		position: relative;
+		z-index: 1;
+	}
 }
 .site_header{
 	background-color: color(text);
@@ -17,6 +22,13 @@
 	}
 	border-bottom: 2px solid color(electric);
 	box-shadow: 0 4px 0 color(text);
+	transition: border 300ms ease-out;
+	
+	@include mq(smalls) {
+		&.toggled {
+			border-color: color(highlight)
+		}
+	}
 }
 .promo + .site_header .site-title {
 	position: relative;
@@ -43,29 +55,13 @@
 		vertical-align: top;
 	}
 	
-	
-	.list_nav {
-		display: table-row;
-	}
-	
 	li {
-		max-width: 45%;
-		min-width: 99px;
-		text-align: center;
-		padding-left: 0;
-		padding-right: 0;
-		display: table-cell;
-	}
-	
-	.nav_primary a {
-		color: color(electric);
-	}
-	.nav_secondary a {
-		color: color(shag)
+		display: inline-block;
+		width: auto;
 	}
 	
 	li a {
-		
+		color: desaturate(color(highlight), 10%);
 		white-space: nowrap;
 		padding-right: 10%;
 		padding-left: 10%;
@@ -80,58 +76,119 @@
 	}
 	
 	.nav {
-		position: absolute;
-		right: 0;
+		@extend %txt_upper;
 	}
 	
-	.nav_primary {
-		bottom: 0;
-		@include type-space(padding-bottom, 1);
-	}
-	
-	.nav_secondary {
-		top: 0;
-		right: 0;
-		
-		@include mq((bigs, smallish)){
-			border-bottom: 1px dotted rgba(white, .3);
+	@include mq((bigs, smallish)){
+		.nav {
+			position: absolute;
+			right: 0;
 		}
-	}
-	
-	.nav_primary_list {
-		@include rems(font-size, modular-scale(1));
-		@extend %txt_upper;
-		@include type-space(margin-left, .5);
-		@include type-space(padding-bottom, 1);
-	}
-
-	.nav_secondary_list {
-		@extend %txt_upper;
-		@include type-space(padding-left, .5);
-		float: right;
+		.list_nav {
+			display: table-row;
+		}
 		
+		li {
+			max-width: 45%;
+			min-width: 99px;
+			text-align: center;
+			padding-left: 0;
+			padding-right: 0;
+			display: table-cell;
+		}
+		
+		.nav_primary_list {
+			@include rems(font-size, modular-scale(1));
+			@include type-space(margin-left, .5);
+			@include type-space(padding-bottom, 1);
+		}
+
+		.nav_secondary_list {
+			@include type-space(padding-left, .5);
+			float: right;
+		}
+		
+		.nav_primary a {
+			color: color(electric);
+		}
+		.nav_secondary a {
+			color: color(royce);
+		}
+		
+		.nav_primary {
+			bottom: 0;
+			@include type-space(padding-bottom, 1);
+		}
+		.nav_secondary {
+			top: 0;
+			right: 0;
+			border-bottom: 1px dotted rgba(white, .35);
+		}
 	}
 	
 }
 
 .nav_container {
-	display: none;
 	
+	transform-origin: top center;
+	transition: margin 300ms cubic-bezier(.15, .76, .53, .99), 
+		opacity 150ms ease-out, 
+		transform 300ms cubic-bezier(.15, .76, .53, .99);
+	
+	@include mq(small){
+		opacity: 0;
+		transform: rotateX(90deg);
+		width: 175%;
+		margin-left: -71%;
+		width: calc(100% + 60% + 10%);
+		margin-left: calc(-100% + 32.5%);
+		margin-bottom: -50%;
+		padding-top: .75rem;
+		border-top: 1px dotted rgba(white, .3);
+		
+		.toggled & {
+			opacity: 1;
+			transform: rotateX(0);
+			position: relative;
+			z-index: 0;
+			padding-bottom: 1rem;
+			margin-bottom: 0;
+		}
+	}
 	@include mq((bigs, smallish)){
 		display: inline-block !important;
+		transform: none !important;
 	}
+	
 }
 
 .nav_toggle {
+	color: color(electric);
 	display: block;
-	margin: 3rem auto;
+	margin: 4rem 25% 3em auto;
 	position: relative;
 	width: 3em;
 	height: 3em;
 	padding: 1.5em;
+	font-size: 1.15em;
+	
+	&:focus {
+		color: lighten(color(electric), 5%);
+		border-color: inherit;
+		background-color: transparent;
+	}
+	&:hover {
+		color: color(electric, light);
+	}
+	
+	.toggled &, .toggled &:focus {
+		background-color: transparent;
+		color: desaturate(color(highlight), 10%);
+	}
 	
 	@include mq((bigs, smallish)) {
 		display: none !important;
+		transform: none;
 	}
 }
 .nav_toggle:before {
@@ -145,6 +202,7 @@
 	box-shadow: 0 0.25em 0 0 currentcolor, 0 0.5em 0 0 currentcolor;
 	font-size: 2em;
 }
+
 .nav_toggle:focus {
 	outline: none;
 }
@@ -218,14 +276,24 @@
 	display: none;
 }
 
-@media screen and (max-width: 600px) {
+@include mq(small) {
 	.menu-toggle,
 	.main-navigation.toggled .nav-menu {
 		display: block;
+		
 	}
-
+	
+	.nav {
+		width: 100%
+	}
+	
+	.nav li {
+		width: 48%;
+		text-align: center;
+	}
+	
 	.main-navigation ul {
-		display: none;
+		
 	}
 }
 

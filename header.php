@@ -42,10 +42,10 @@ $menu_primary = array(
 $menu_top = array(
 	'theme_location'  => 'secondary',
 	'menu'            => false,
-	'menu_class' 	  => 'nav_secondary_list list_naked list_nav list_inline txt_right',
+	'menu_class' 	  => 'nav_secondary_list list_naked list_nav list_inline',
 	'container'       => false,
 	'echo'            => true,
-	'items_wrap'      => '<ul class="%2$s">%3$s</ul>',
+	'items_wrap'      => '<div class="nav nav_column nav_secondary"><ul class="%2$s">%3$s</ul></div>',
 	'depth'           => 0,
 );
 ?>
@@ -53,7 +53,7 @@ $menu_top = array(
 <div id="page" class="hfeed site">
 	<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'wedding-djs-with-class' ); ?></a>
 <div class="top_tier">
-	<header id="masthead" class="site_header" role="banner">
+	<header id="masthead" class="bg_striped site_header" role="banner">
 		<div class="wrap pad_n_t">
 			<div class="row row_full main_navigation">
 				<div class="column logo_column txt_center smalls_pad_t_half">
@@ -64,15 +64,15 @@ $menu_top = array(
 						</a>
 					</h1>
 				</div>
-				<div class="column nav_column">
+				<div id="site-navigation" class="column nav_column">
 					<button class="nav_toggle button"><span class="visually_hidden">Menu</span></button>
-					<div id="js-nav" class="row_full row nav_container">
-						<div class="nav nav_column nav_secondary">
-							<?php wp_nav_menu( $menu_top ); ?>
-						</div>
-						<div class="nav nav_column nav_primary">
+					<div id="js-nav" class="row_full row nav_container nav-menu">
+					<div class="nav nav_column nav_primary">
 							<?php wp_nav_menu( $menu_primary ); ?>
 						</div>
+						
+							<?php wp_nav_menu( $menu_top ); ?>
+						
 					</div>
 				</div>
 <!--
